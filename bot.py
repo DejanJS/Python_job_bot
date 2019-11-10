@@ -4,18 +4,32 @@ import requests
 import re
 import threading
 
-def scrape(url):
+def scrape(url,interestedin):
     data = requests.get(url)
     soup = BeautifulSoup(data.text,'html.parser')
+    find_lastpage = soup.find("i",{"class":"uk-icon-angle-double-right"}) 
+    last_page_number = find_lastpage.find_parent("a")['data-page']
+    for page in range(int(last_page_number)):
+       page_url = f"https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50&page={page}"
+       job_thread = threading.Thread(target=scrape_jobs,args=(page_url,) 
+    print("our find page",find_lastpage,link)
+    
+   # print("Python jobs links : ",interested_links)
+    
+
+def scrape_jobs(url):
+    data = requests.get(url)
+    soup = BeautifulSoup(data.text,'html.parser')
+    print(url,"scrape description")
     posts = soup.findAll('div',id=re.compile("oglas_[0-9]*"))
     jobs = [JobFinder(post) for post in posts]
-    interestedin = ['react','javascript','node','python']
     interests = [job.interested(interestedin) for job in jobs]
     interested_jobs = list(filter(lambda job : job.interested(interestedin),jobs))
     interested_links = [interested.link for interested in interested_jobs]
-    print("Python jobs links : ",interested_links)
-    print("job titles",[post.title for post in jobs])
-    
+
+    print('Interested Jobs : ',interested_jobs)
+    print('Interested Links : ',interested_links)
+
 
 class JobFinder():
     def __init__(self,post):
@@ -33,11 +47,17 @@ class JobFinder():
     def interested(self,tags):
         return len( set(tags).intersection( set(self.tags) ) ) > 0
         
+    def page_finder(post):
+        find_page = post.select('li.uk-icon-angle-double-right') 
+        print("our find page",find_page)
     def __str__(self):
         return f'{self.title}'
 
+print("What skills do you have?")
+interests = input().lower().split(",")
 
-main_thread = threading.Thread(target=scrape,args=("https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5b0%5d=5&dist=50&vreme_postavljanja=today",))
+main_thread = threading.Thread(target=scrape,args=("https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50",interests))
+
 main_thread.start()
 """
 data = requests.get("https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5b0%5d=5&dist=50&vreme_postavljanja=today")
