@@ -7,27 +7,28 @@ import threading
 def scrape(url,interestedin):
     data = requests.get(url)
     soup = BeautifulSoup(data.text,'html.parser')
-    find_lastpage = soup.find("i",{"class":"uk-icon-angle-double-right"}) 
+    find_lastpage = soup.find("i",{"class":"uk-icon-angle-double-right"}) #double arrow right with attribute of the last page of job post,pagination bar on bottom of the page e.g(1,2,3,4 pages..)
     last_page_number = find_lastpage.find_parent("a")['data-page']
-    for page in range(int(last_page_number)):
+    for page in range(int(last_page_number)):#for n of pages create each thread and scrape everything
        page_url = f"https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50&page={page}"
-       job_thread = threading.Thread(target=scrape_jobs,args=(page_url,) 
-    print("our find page",find_lastpage,link)
-    
+       job_thread = threading.Thread(target=scrape_jobs,args=(page_url,interestedin)) 
+       job_thread.start()   
    # print("Python jobs links : ",interested_links)
     
 
-def scrape_jobs(url):
+def scrape_jobs(url,interestedin):
     data = requests.get(url)
     soup = BeautifulSoup(data.text,'html.parser')
+    #this can be cached in the future so i am not parsing same page n number of times later..
     print(url,"scrape description")
     posts = soup.findAll('div',id=re.compile("oglas_[0-9]*"))
     jobs = [JobFinder(post) for post in posts]
-    interests = [job.interested(interestedin) for job in jobs]
+    interests = [job.interested(interestedin) for job in jobs] #this filters jobs by interested in array
     interested_jobs = list(filter(lambda job : job.interested(interestedin),jobs))
+    interested_job_titles = [interested.title for interested in interested_jobs]
     interested_links = [interested.link for interested in interested_jobs]
 
-    print('Interested Jobs : ',interested_jobs)
+    print('Interested Jobs : ',interested_job_titles)
     print('Interested Links : ',interested_links)
 
 
@@ -53,10 +54,12 @@ class JobFinder():
     def __str__(self):
         return f'{self.title}'
 
-print("What skills do you have?")
-interests = input().lower().split(",")
+#input prompt
+def get_interests():
+    print("What skills do you have?")
+    return input().lower().split(",")
 
-main_thread = threading.Thread(target=scrape,args=("https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50",interests))
+main_thread = threading.Thread(target=scrape,args=("https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50",get_interests()))
 
 main_thread.start()
 """
