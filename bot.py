@@ -60,5 +60,5 @@ def get_interests():
     return input().lower().split(",")
 
 main_thread = threading.Thread(target=scrape,args=("https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50",get_interests()))
-
+# url for the jobs today/current https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50&vreme_postavljanja=today
 main_thread.start()
