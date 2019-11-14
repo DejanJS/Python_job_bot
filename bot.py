@@ -10,7 +10,7 @@ def scrape(url,interestedin):
     find_lastpage = soup.find("i",{"class":"uk-icon-angle-double-right"}) #double arrow right with attribute of the last page of job post,pagination bar on bottom of the page e.g(1,2,3,4 pages..)
     last_page_number = find_lastpage.find_parent("a")['data-page']
     for page in range(int(last_page_number)):#for n of pages create each thread and scrape everything
-       page_url = f"https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50&page={page}"
+       page_url = f"https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50&vreme_postavljanja=today"
        job_thread = threading.Thread(target=scrape_jobs,args=(page_url,interestedin)) 
        job_thread.start()   
    # print("Python jobs links : ",interested_links)
@@ -59,6 +59,7 @@ def get_interests():
     print("What skills do you have?")
     return input().lower().split(",")
 
-main_thread = threading.Thread(target=scrape,args=("https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50",get_interests()))
+main_thread = threading.Thread(target=scrape,args=("https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50&vreme_postavljanja=today",get_interests()))
 # url for the jobs today/current https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50&vreme_postavljanja=today
+#https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50
 main_thread.start()
