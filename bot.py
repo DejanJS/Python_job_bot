@@ -3,7 +3,10 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import threading
+from datetime import datetime
+from time import strftime
 
+current_day =int(datetime.today().strftime("%d")) 
 def scrape(url,interestedin):
     data = requests.get(url)
     soup = BeautifulSoup(data.text,'html.parser')
