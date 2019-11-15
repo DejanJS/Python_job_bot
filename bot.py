@@ -5,6 +5,10 @@ import re
 import threading
 from datetime import datetime
 from time import strftime
+import os
+
+with open(os.path.expanduser(os.path.join("~/Desktop","test.txt")),"w+") as f:
+    f.write("hey there")
 
 current_day =int(datetime.today().strftime("%d")) 
 def scrape(url,interestedin):
@@ -30,6 +34,12 @@ def scrape_jobs(url,interestedin):
     interested_jobs = list(filter(lambda job : job.interested(interestedin),jobs))
     interested_job_titles = [interested.title for interested in interested_jobs]
     interested_links = [interested.link for interested in interested_jobs]
+    if len(interested_links) > 0:
+        with open(os.path.expanduser(os.path.join("~/Desktop",f"jobs_day_{current_day}.txt")),"w+") as f:
+            for n in interested_links:
+                f.write(n + '\n') #should print me all links
+    else:
+        print("no jobs today :(")
 
     print('Interested Jobs : ',interested_job_titles)
     print('Interested Links : ',interested_links)
