@@ -31,7 +31,7 @@ def scrape_jobs(url,interestedin):
     print(url,"scrape description")
     posts = soup.findAll('div',id=re.compile("oglas_[0-9]*"))
     job_company_tags = soup.select('p.uk-margin-remove > a')
-    job_companies = [company.text.strip() for company in job_company_tags]
+    job_companies = [company.text.strip() for company in job_company_tags] #name of the companies for each job
     jobs = [JobFinder(post) for post in posts]
     interests = [job.interested(interestedin) for job in jobs] #this filters jobs by interested in array
     interested_jobs = list(filter(lambda job : job.interested(interestedin),jobs))
