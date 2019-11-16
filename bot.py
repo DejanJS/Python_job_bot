@@ -11,6 +11,7 @@ with open(os.path.expanduser(os.path.join("~/Desktop","test.txt")),"w+") as f:
     f.write("hey there")
 
 current_day =int(datetime.today().strftime("%d")) 
+skills = None
 def scrape(url,interestedin):
     data = requests.get(url)
     soup = BeautifulSoup(data.text,'html.parser')
@@ -36,6 +37,7 @@ def scrape_jobs(url,interestedin):
     interested_links = [interested.link for interested in interested_jobs]
     if len(interested_links) > 0:
         with open(os.path.expanduser(os.path.join("~/Desktop",f"jobs_day_{current_day}.txt")),"w+") as f:
+            f.write(f"Jobs for {datetime.today().strftime('%d.%B|%Y')} for keywords : {skills}".center(40,"=") + ("\n")*2) 
             for n in interested_links:
                 f.write(n + '\n') #should print me all links
     else:
@@ -69,8 +71,12 @@ class JobFinder():
 
 #input prompt
 def get_interests():
+    global skills
     print("What skills do you have?")
-    return input().lower().split(",")
+    keywords = input().lower().split(",")
+    skills = keywords
+#    return input().lower().split(",")
+    return keywords 
 
 main_thread = threading.Thread(target=scrape,args=("https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50&vreme_postavljanja=today",get_interests()))
 # url for the jobs today/current https://poslovi.infostud.com/oglasi-za-posao/beograd?category%5B0%5D=5&dist=50&vreme_postavljanja=today
