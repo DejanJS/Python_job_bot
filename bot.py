@@ -37,7 +37,7 @@ def scrape_jobs(url,interestedin):
     interested_links = [interested.link for interested in interested_jobs]
     if len(interested_links) > 0:
         with open(os.path.expanduser(os.path.join("~/Desktop",f"jobs_day_{current_day}.txt")),"w+") as f:
-            f.write(f"Jobs for {datetime.today().strftime('%d.%B|%Y')} for keywords : {skills}".center(40,"=") + ("\n")*2) 
+            f.write(f"Jobs for {datetime.today().strftime('%d.%B|%Y')} for keywords : {','.join(str(word) for word in skills)}".center(40,"=") + ("\n")*2) 
             for n in interested_links:
                 f.write(n + '\n') #should print me all links
     else:
