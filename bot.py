@@ -30,6 +30,8 @@ def scrape_jobs(url,interestedin):
     #this can be cached in the future so i am not parsing same page n number of times later..
     print(url,"scrape description")
     posts = soup.findAll('div',id=re.compile("oglas_[0-9]*"))
+    job_company_tags = soup.select('p.uk-margin-remove > a')
+    job_companies = [company.text.strip() for company in job_company_tags]
     jobs = [JobFinder(post) for post in posts]
     interests = [job.interested(interestedin) for job in jobs] #this filters jobs by interested in array
     interested_jobs = list(filter(lambda job : job.interested(interestedin),jobs))
@@ -39,7 +41,7 @@ def scrape_jobs(url,interestedin):
         with open(os.path.expanduser(os.path.join("~/Desktop",f"jobs_day_{current_day}.txt")),"w+") as f:
             f.write(f" Jobs for {datetime.today().strftime('%d.%B|%Y')} for keywords : {','.join(str(word) for word in skills)} ".center(60,"=") + ("\n")*2) 
             for i,v in enumerate(interested_links):
-                f.write(interested_job_titles[i] + " - " + v + '\n'*2) #should print me all links
+                f.write(interested_job_titles[i]+f" ({job_companies[i]})" + " - " + v + '\n'*2) #should print me all links
     else:
         print("no jobs today :(")
 
