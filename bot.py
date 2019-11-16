@@ -7,8 +7,6 @@ from datetime import datetime
 from time import strftime
 import os
 
-with open(os.path.expanduser(os.path.join("~/Desktop","test.txt")),"w+") as f:
-    f.write("hey there")
 
 current_day =int(datetime.today().strftime("%d")) 
 skills = None
